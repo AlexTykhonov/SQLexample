@@ -16,6 +16,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tae.sqlexample.DAO.BookDao;
+import com.tae.sqlexample.Entity.BookEntity;
+
 public class DisplayContact extends Activity {
    int from_Where_I_Am_Coming = 0;
    private DBHelper mydb ;
@@ -26,7 +29,9 @@ public class DisplayContact extends Activity {
    TextView street;
    TextView place;
    int id_To_Update = 0;
-   
+   BookDao bookDao;
+
+
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -39,12 +44,17 @@ public class DisplayContact extends Activity {
 
       mydb = new DBHelper(this);
 
+      bookDao = DataBaseClient.getDataBaseClient(this).getAppDatabase().bookDao();
+
+
       Bundle extras = getIntent().getExtras(); 
       if(extras !=null) {
          int Value = extras.getInt("id");
          
          if(Value>0){
             //means this is the view part not the add contact part.
+
+            BookEntity bookEntity = bookDao.getById(Value);
             Cursor rs = mydb.getData(Value);
             id_To_Update = Value;
             rs.moveToFirst();
@@ -61,7 +71,7 @@ public class DisplayContact extends Activity {
             Button b = (Button)findViewById(R.id.button1);
             b.setVisibility(View.VISIBLE);
 
-            name.setText((CharSequence)nam);
+            name.setText((int) bookEntity.id);
             name.setFocusable(true);
             name.setClickable(true);
 
@@ -134,6 +144,9 @@ public class DisplayContact extends Activity {
             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
                   mydb.deleteContact(id_To_Update);
+
+                  bookDao.delete(id);
+
                   Toast.makeText(getApplicationContext(), "Deleted Successfully", 
                      Toast.LENGTH_SHORT).show();  
                   Intent intent = new Intent(getApplicationContext(),MainActivity.class);

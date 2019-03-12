@@ -1,5 +1,6 @@
 package com.tae.sqlexample;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 
@@ -16,6 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.tae.sqlexample.DataBase.AppDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,15 @@ public class MainActivity extends AppCompatActivity {
     public final static String EXTRA_MESSAGE = "MESSAGE";
     private ListView obj;
     DBHelper mydb;
+
+
+    ///
+    AppDatabase db =  Room.databaseBuilder(getApplicationContext(),
+            AppDatabase.class, "bookdatabase")
+            .allowMainThreadQueries()
+            .build();
+    ///
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
